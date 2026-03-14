@@ -5,10 +5,7 @@ import com.metropolia.aarojy.database_solutions_project.dto.OrderDTO;
 import com.metropolia.aarojy.database_solutions_project.dto.OrderItemRequest;
 import com.metropolia.aarojy.database_solutions_project.entity.*;
 import com.metropolia.aarojy.database_solutions_project.mapper.OrderMapper;
-import com.metropolia.aarojy.database_solutions_project.repository.CustomerAddressRepository;
-import com.metropolia.aarojy.database_solutions_project.repository.CustomerRepository;
-import com.metropolia.aarojy.database_solutions_project.repository.OrderRepository;
-import com.metropolia.aarojy.database_solutions_project.repository.ProductRepository;
+import com.metropolia.aarojy.database_solutions_project.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,12 +23,14 @@ public class OrderController {
     private final CustomerAddressRepository customerAddressRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
+    private final UserRepository userRepository;
 
-    public OrderController(OrderRepository orderRepository, CustomerAddressRepository customerAddressRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+    public OrderController(OrderRepository orderRepository, CustomerAddressRepository customerAddressRepository, CustomerRepository customerRepository, ProductRepository productRepository, UserRepository userRepository) {
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
         this.customerAddressRepository = customerAddressRepository;
         this.productRepository = productRepository;
+        this.userRepository = userRepository;
     }
 
     @GetMapping("/list")
@@ -96,8 +95,23 @@ public class OrderController {
 
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<?> cancelOrder(@PathVariable Integer orderId) {
+
+        int user_id = Integer.parseInt(SecurityContextHolder.getContext().getAuthentication().getName());
+
+        Customer customer = customerRepository.findByAppUser_Id(user_id)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getCustomer().getId() != customer.getId()) {
+            return ResponseEntity.status(403).body(
+                    Map.of(
+                            "error", "Forbidden",
+                            "message", "You do not have permission to cancel this order."
+                    )
+            );
+        }
 
         if (Objects.equals(order.getStatus(), "CANCELLED")) {
             return ResponseEntity.badRequest().body(

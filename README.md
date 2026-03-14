@@ -1,1 +1,34 @@
 ## API documentation
+
+### Endpoints
+
+#### Does not require authentication
+
+Product
+
+| Endpoint          | Purpose                           | requests body | response body                                                                                                                                                       |
+|-------------------|-----------------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GET /product/all  | Retrieve all products             | {}            | List of product entities<br/>```[{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}, ... ]``` |
+| GET /product/{id} | Retrieve a specific product by ID | {}            | A single product entity```{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}```               |
+
+Category
+
+| Endpoint            | Purpose                                   | requests body | response body                                                                                                                                                                                                                                                                                                        |
+|---------------------|-------------------------------------------|---------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GET /category/all   | Retrieve all categories                   | {}            | List of category entities<br/>```[{"id":1,"name":"Elektroniikka","description":"Sähkölaitteet, komponentit ja elektroniikkatuotteet"}, ... ]```                                                                                                                                                                      |
+| GET /category/{id}  | Retrieve all products in a category by ID | {}            | A single category entity<br/>```[{"id":2,"name":"Happy Pack 382","description":"Score million throw thing instead ball line think.","price":546.08,"stock_quantity":407,"reserved_quantity":0,"category":{"id":10,"name":"Urheilu & vapaa-aika","description":"Urheiluvälineet, pelit ja vapaa-ajan tuotteet"}}, ... ]``` |
+
+#### Requires authentication
+
+Profile
+
+| Endpoint     | Purpose                                   | requests body | response body                                                                                                               |
+|--------------|-------------------------------------------|---------------|-----------------------------------------------------------------------------------------------------------------------------|
+| GET /profile | Retrieve the authenticated user's profile | {}            | Customer entity<br/>```{"first_name": "Matti", "last_name": "Tepponen", "email": "Matti@tepponen.com", "phone": "0446753464"}``` |
+
+Order
+
+| Endpoint           | Purpose                                                                                                         | requests body                                                                            | response body                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+|--------------------|-----------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GET /order/list    | Lists all orders of the authenticated user                                                                      | {}                                                                                       | List of order entities<br/>```[{"id": 200016, "orderDate": "2026-03-14T17:42:24", "deliveryDate": null, "status": "CANCELLED", "shippingAddress": { "street": "Aurajoentie 5", "city": "Turku", "postalCode": "54321", "country": "Finland"}, "totalPrice": 1773.50, "items": [{"quantity": 2, "product": {"name": "Happy Pack 382", "description": "Score million throw thing instead ball line think.", "price": 546.08, "category": {"name": "Urheilu & vapaa-aika"}}}, {"quantity": 1, "product": {"name": "Quantum Widget 457", "description": "Ask decide need next very capital.", "price": 681.34, "category": {"name": "Vaatteet"}}}]}, ... ]``` |
+| POST /order/create | Create a new order for the authenticated user (also updates the reserved quantity of the products in the order) | ```{"items": [{ "productId": 2, "quantity": 2 }, { "productId": 3, "quantity": 1 }]}```  | A single order entity<br/>```{"id": 200016, "orderDate": "2026-03-14T17:42:24", "deliveryDate": null, "status": "CANCELLED", "shippingAddress": { "street": "Aurajoentie 5", "city": "Turku", "postalCode": "54321", "country": "Finland"}, "totalPrice": 1773.50, "items": [{"quantity": 2, "product": {"name": "Happy Pack 382", "description": "Score million throw thing instead ball line think.", "price": 546.08, "category": {"name": "Urheilu & vapaa-aika"}}}, {"quantity": 1, "product": {"name": "Quantum Widget 457", "description": "Ask decide need next very capital.", "price": 681.34, "category": {"name": "Vaatteet"}}}]}```          |

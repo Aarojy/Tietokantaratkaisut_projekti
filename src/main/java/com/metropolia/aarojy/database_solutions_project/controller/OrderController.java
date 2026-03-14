@@ -77,6 +77,9 @@ public class OrderController {
             Product product = productRepository.findById(itemDTO.getId())
                     .orElseThrow(() -> new RuntimeException("Product not found"));
 
+            product.setReserved_quantity(product.getReserved_quantity() + itemDTO.getQuantity());
+            productRepository.save(product);
+
             OrderItem item = new OrderItem();
             item.setProduct(product);
             item.setQuantity(itemDTO.getQuantity());
@@ -93,6 +96,7 @@ public class OrderController {
         return ResponseEntity.ok(response);
     }
 
+    @Transactional
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<?> cancelOrder(@PathVariable Integer orderId) {
 
@@ -129,6 +133,16 @@ public class OrderController {
                             "message", "Shipped orders cannot be cancelled."
                     )
             );
+        }
+
+        for (OrderItem item : order.getItems()) {
+            Product product = item.getProduct();
+
+            product.setReserved_quantity(
+                    product.getReserved_quantity() - item.getQuantity()
+            );
+
+            productRepository.save(product);
         }
 
         order.setStatus("CANCELLED");

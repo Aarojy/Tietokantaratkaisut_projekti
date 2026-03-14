@@ -17,6 +17,10 @@ public class Product {
     private String description;
     private BigDecimal price;
     private int stock_quantity;
+    private int reserved_quantity;
+
+    @Version
+    private int version;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
@@ -80,5 +84,13 @@ public class Product {
 
     public void setCategory(ProductCategory category) {
         this.category = category;
+    }
+
+    public int getReserved_quantity() {
+        return reserved_quantity;
+    }
+
+    public void setReserved_quantity(int reserved_quantity) {
+        this.reserved_quantity = reserved_quantity;
     }
 }

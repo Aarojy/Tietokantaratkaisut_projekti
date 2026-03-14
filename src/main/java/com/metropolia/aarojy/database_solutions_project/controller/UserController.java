@@ -5,9 +5,12 @@ import com.metropolia.aarojy.database_solutions_project.dto.LoginDTO;
 import com.metropolia.aarojy.database_solutions_project.dto.RegisterDTO;
 import com.metropolia.aarojy.database_solutions_project.entity.AppUser;
 import com.metropolia.aarojy.database_solutions_project.entity.Customer;
+import com.metropolia.aarojy.database_solutions_project.entity.CustomerAddress;
+import com.metropolia.aarojy.database_solutions_project.repository.CustomerAddressRepository;
 import com.metropolia.aarojy.database_solutions_project.repository.CustomerRepository;
 import com.metropolia.aarojy.database_solutions_project.repository.UserRepository;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,18 +27,20 @@ public class UserController {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final CustomerRepository customerRepository;
+    private final CustomerAddressRepository customerAddressRepository;
     private final JwtService jwtService;
 
-    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, CustomerRepository customerRepository, JwtService jwtService) {
+    public UserController(UserRepository userRepository, PasswordEncoder passwordEncoder, CustomerRepository customerRepository, CustomerAddressRepository customerAddressRepository, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.customerRepository = customerRepository;
+        this.customerAddressRepository = customerAddressRepository;
         this.jwtService = jwtService;
     }
 
     @Transactional
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody RegisterDTO regDto) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody RegisterDTO regDto) {
 
         if (userRepository.findByUsername(regDto.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Username already exists");
@@ -56,6 +61,15 @@ public class UserController {
         customer.setAppUser(savedUser);
 
         customerRepository.save(customer);
+
+        CustomerAddress address = new CustomerAddress();
+        address.setStreet(regDto.getStreet());
+        address.setCity(regDto.getCity());
+        address.setPostalCode(regDto.getPostalCode());
+        address.setCountry(regDto.getCountry());
+        address.setCustomer(customer);
+
+        customerAddressRepository.save(address);
 
         return ResponseEntity.ok("User registered successfully");
     }

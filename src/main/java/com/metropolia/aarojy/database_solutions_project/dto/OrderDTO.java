@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record OrderDTO(
+        int id,
         LocalDateTime orderDate,
         LocalDateTime deliveryDate,
         String status,

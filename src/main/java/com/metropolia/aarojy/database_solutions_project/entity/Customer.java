@@ -1,9 +1,6 @@
 package com.metropolia.aarojy.database_solutions_project.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "customers")
@@ -16,6 +13,10 @@ public class Customer {
     private String last_name;
     private String email;
     private String phone;
+
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private AppUser appUser;
 
     public Customer() {
     }
@@ -66,5 +67,13 @@ public class Customer {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public AppUser getAppUser() {
+        return appUser;
+    }
+
+    public void setAppUser(AppUser appUser) {
+        this.appUser = appUser;
     }
 }

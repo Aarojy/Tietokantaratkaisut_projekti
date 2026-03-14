@@ -11,6 +11,7 @@ import com.metropolia.aarojy.database_solutions_project.repository.OrderReposito
 import com.metropolia.aarojy.database_solutions_project.repository.ProductRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -33,10 +34,18 @@ public class OrderController {
         this.productRepository = productRepository;
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<OrderDTO>> getOrdersByUserId(@PathVariable Integer userId) {
+    @GetMapping("/list")
+    public ResponseEntity<List<OrderDTO>> getOrdersByUserId() {
 
-        List<Order> orders = orderRepository.findByCustomerId(userId);
+        Integer authenticatedUserId = (Integer) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Customer customer = customerRepository.findByAppUser_Id(authenticatedUserId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        List<Order> orders = orderRepository.findByCustomerId(customer.getId());
 
         List<OrderDTO> orderDTOs = orders.stream()
                 .map(OrderMapper::toOrderDTO)
@@ -49,13 +58,19 @@ public class OrderController {
     @PostMapping("/create")
     public ResponseEntity<OrderDTO> createOrder(@RequestBody NewOrderDTO newOrderDTO) {
 
-        CustomerAddress shippingAddress = customerAddressRepository
-                .findByCustomerId(newOrderDTO.getCustomerId())
-                .orElseThrow(() -> new RuntimeException("Shipping address not found"));
+        Integer authenticatedUserId = (Integer) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
 
-        Customer customer = customerRepository
-                .findById(newOrderDTO.getCustomerId())
+        Customer customer = customerRepository.findByAppUser_Id(authenticatedUserId)
                 .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        int customerId = customer.getId();
+
+        CustomerAddress shippingAddress = customerAddressRepository
+                .findByCustomerId(customerId)
+                .orElseThrow(() -> new RuntimeException("Shipping address not found"));
 
         Order order = OrderMapper.toOrderEntity(customer, shippingAddress);
 

@@ -18,6 +18,7 @@ public class OrderMapper {
 
 
         return new OrderDTO(
+                order.getId(),
                 order.getOrder_date(),
                 order.getDelivery_date(),
                 order.getStatus(),

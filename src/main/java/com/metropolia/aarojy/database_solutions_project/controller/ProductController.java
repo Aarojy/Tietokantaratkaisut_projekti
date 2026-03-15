@@ -37,4 +37,25 @@ public class ProductController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/search/name/{string}")
+    public ResponseEntity<List<ProductDTO>> searchProductsByName(@PathVariable String string) {
+        List<ProductDTO> products = productRepository.findByNameContainingIgnoreCase(string)
+                .stream()
+                .map(OrderMapper::toProductDTO)
+                .toList();
+
+        return ResponseEntity.ok(products);
+    }
+
+    @GetMapping("/search/price/{min}/{max}")
+    public ResponseEntity<List<ProductDTO>> searchProductsByPriceRange(@PathVariable Double min, @PathVariable Double max) {
+        List<ProductDTO> products = productRepository.findAll()
+                .stream()
+                .filter(p -> p.getPrice().doubleValue() >= min && p.getPrice().doubleValue() <= max)
+                .map(OrderMapper::toProductDTO)
+                .toList();
+
+        return ResponseEntity.ok(products);
+    }
 }

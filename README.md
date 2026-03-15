@@ -213,9 +213,9 @@ Category
 
 Supplier
 
-| Endpoint           | Purpose                                  | requests body | response body                                                                                                                            |
-|--------------------|------------------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| GET /supplier/all  | Retrieve all suppliers                   | {}            | List of supplier entities<br/>```[{"name": "Polar Electronics Oy"}, {"name": "EcoTech Ltd"}, {"name": "Suomen Viherpalvelut"}, ... ]```  |
+| Endpoint           | Purpose                                                                                                                                                              | requests body | response body                                                                                                                            |
+|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| GET /supplier/all  | Retrieve all suppliers (Retrieve all suppliers to be able to search for products by supplier name using the "GET /product/search/supplier/{supplierName}" endpoint.) | {}            | List of supplier entities<br/>```[{"name": "Polar Electronics Oy"}, {"name": "EcoTech Ltd"}, {"name": "Suomen Viherpalvelut"}, ... ]```  |
 
 <br>
 

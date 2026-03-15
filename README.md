@@ -7,15 +7,15 @@ This API provides all the necessary endpoints to build a user-facing e-commerce 
 ## Technologies Used
 
 - **Java 21** - Programming language used for developing the application.
+- **Maven** - Build and dependency management.
 - **Spring Boot 3.5.11** - Application framework for building the REST API.
 - **Spring Web** - HTTP routing and REST controllers.
 - **Spring Data JPA (Hibernate)** - ORM and database persistence layer.
-- **MariaDB** - Relational database used for application data.
-- **MariaDB JDBC Driver** - Database connectivity for MariaDB.
 - **Spring Security** - Authentication/authorization for protected endpoints.
 - **JWT** - Token-based authentication.
 - **Bean Validation (Jakarta Validation / Spring Validation)** - Request payload validation.
-- **Maven** - Build and dependency management.
+- **MariaDB JDBC Driver** - Database connectivity for MariaDB.
+- **MariaDB** - Relational database used for application data.
 
 ## Database features
 
@@ -221,6 +221,8 @@ Supplier
 <br>
 
 #### Requires authentication
+These endpoints require the user to be authenticated by including a valid JWT token in the "Authorization" header of the request. The token should be in the format ```Authorization: Bearer [token here]```. If the token is missing, invalid or expired, the API will respond with a 403 Forbidden status code.
+
 
 Customer
 

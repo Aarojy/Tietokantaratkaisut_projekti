@@ -48,6 +48,17 @@ Below are the implemented database features:
 - **Locking**:
   - Optimistic locking is implemented for the "product" entity using a version field.
 
+- **Temporal tables**:
+  - App_user table was made into a temporal table, which allows for tracking changes to user accounts over time and provides the ability to query historical data about user accounts if needed (e.g., for account recovery).
+    ```
+    ALTER TABLE app_user
+    ADD COLUMN valid_from TIMESTAMP(6) GENERATED ALWAYS AS ROW START,
+    ADD COLUMN valid_to   TIMESTAMP(6) GENERATED ALWAYS AS ROW END,
+    ADD PERIOD FOR SYSTEM_TIME (valid_from, valid_to),
+    ADD SYSTEM VERSIONING;
+    ```
+
+
 ## API security features
 
 - **Authentication**:

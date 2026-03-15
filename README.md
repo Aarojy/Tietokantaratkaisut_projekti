@@ -15,10 +15,18 @@ This API provides all the necessary endpoints to build a user-facing e-commerce 
 - **Spring Security** - Authentication/authorization for protected endpoints.
 - **JWT (jjwt 0.11.5)** - Token-based authentication (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`).
 - **Bean Validation (Jakarta Validation / Spring Validation)** - Request payload validation.
-- **Springdoc OpenAPI (Swagger UI)** - Interactive API documentation (`springdoc-openapi-starter-webmvc-ui`).
-- **Maven Wrapper (`mvnw`, `mvnw.cmd`)** - Build and dependency management.
+- **Maven** - Build and dependency management.
 
 ## Database features
+
+Database schema used was the one provided by for the assignment, but some additional features were implemented:
+
+- "app_user" table was added to store user login credentials and role information. The table has a one-to-one relationship with the "customer" table. This was done to separate authentication data from customer profile data.
+- "user_id" field was added to the "customer" table to link it to the "app_user" table.
+- "version" field was added to the "product" table to implement optimistic locking.
+- "reserved_quantity" field was added to the "product" table to keep track of the quantity of each product that is reserved for existing orders but not yet delivered.
+
+Below are the implemented database features:
 
 - **Indexing**: Indexes on frequently queried fields.
   - 'customer_id' in 'orders' for fast retrieval of user orders.
@@ -28,15 +36,34 @@ This API provides all the necessary endpoints to build a user-facing e-commerce 
   - 'username' in 'app_users' for fast authentication lookups.
   
 - **Information Security**:
-  - Passwords are securely hashed using BCrypt before storing in the database.
-  - JWT tokens are used for stateless authentication, with secure signing and expiration.
-  - Input validation is implemented to prevent invalid data entering the database.
-  - Endpoints are protected by only allowing authenticated users to access sensitive operations (e.g., viewing profile, managing orders).
   - Database user used by the API is configured with the least privileges necessary for application functionality.
   - Database can only be accessed from the same ip address as the API server.
 
 - **Database events**:
   - A scheduled MySQL event runs every 12 hours and updates the status of orders whose delivery date has already passed to "DELIVERED".
+
+- **Triggers**:
+  - A database trigger is set up to automatically reduce the stock quantity and reserved quantity of products when orders that include them have their status updated to "SHIPPED".
+
+- **Locking**:
+  - Optimistic locking is implemented for the "product" entity using a version field.
+
+## API security features
+
+- **Authentication**:
+  - JWT tokens are used for stateless authentication, with secure signing and expiration.
+
+- **Validation**:
+  - Input validation is implemented to prevent invalid data entering the database.
+
+- **Hash-based password storage**:
+  - User passwords are hashed using BCrypt before being stored in the database.
+
+- **Endpoint protection**:
+  - Endpoints are protected by only allowing authenticated users to access sensitive operations (e.g., viewing profile, managing orders).
+
+- **Transactions**:
+  - Order creation and cancellation operations are wrapped in transactions to ensure data consistency.
 
 ## API documentation
 

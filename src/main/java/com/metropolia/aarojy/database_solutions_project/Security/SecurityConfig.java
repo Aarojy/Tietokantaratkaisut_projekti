@@ -22,6 +22,7 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/auth/register",
                                 "/auth/login",
+                                "/auth/change_password",
                                 "/product/all",
                                 "/product/*",
                                 "/product/search/name/*",

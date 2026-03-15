@@ -37,6 +37,17 @@ public class OrderMapper {
         );
     }
 
+    public static OrderSummaryDTO toOrderSummaryDTO(OrderSummary summary) {
+        return new OrderSummaryDTO(
+                summary.getOrderId(),
+                summary.getTotalCost(),
+                summary.getAmountOfDifferentProducts(),
+                summary.getStatus(),
+                summary.getOrderDate(),
+                summary.getDeliveryDate()
+        );
+    }
+
     private static OrderItemDTO toOrderItemDTO(OrderItem item) {
         return new OrderItemDTO(
                 item.getQuantity(),

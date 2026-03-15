@@ -3,6 +3,7 @@ package com.metropolia.aarojy.database_solutions_project.controller;
 import com.metropolia.aarojy.database_solutions_project.dto.NewOrderDTO;
 import com.metropolia.aarojy.database_solutions_project.dto.OrderDTO;
 import com.metropolia.aarojy.database_solutions_project.dto.OrderItemRequest;
+import com.metropolia.aarojy.database_solutions_project.dto.OrderSummaryDTO;
 import com.metropolia.aarojy.database_solutions_project.entity.*;
 import com.metropolia.aarojy.database_solutions_project.mapper.OrderMapper;
 import com.metropolia.aarojy.database_solutions_project.repository.*;
@@ -21,15 +22,36 @@ import java.util.Objects;
 public class OrderController {
 
     private final OrderRepository orderRepository;
+    private final OrderSummaryRepository orderSummaryRepository;
     private final CustomerAddressRepository customerAddressRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
 
-    public OrderController(OrderRepository orderRepository, CustomerAddressRepository customerAddressRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+    public OrderController(OrderRepository orderRepository, OrderSummaryRepository orderSummaryRepository, CustomerAddressRepository customerAddressRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
+        this.orderSummaryRepository = orderSummaryRepository;
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
         this.customerAddressRepository = customerAddressRepository;
         this.productRepository = productRepository;
+    }
+
+    @GetMapping("/list/summary")
+    public ResponseEntity<List<OrderSummaryDTO>> getOrderSummariesByUserId() {
+        Integer authenticatedUserId = (Integer) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Customer customer = customerRepository.findByAppUser_Id(authenticatedUserId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        List<OrderSummary> summaries = orderSummaryRepository.findByCustomerId(customer.getId());
+
+        List<OrderSummaryDTO> summaryDTOs = summaries.stream()
+                .map(OrderMapper::toOrderSummaryDTO)
+                .toList();
+
+        return ResponseEntity.ok(summaryDTOs);
     }
 
     @GetMapping("/list")
@@ -50,6 +72,29 @@ public class OrderController {
                 .toList();
 
         return ResponseEntity.ok(orderDTOs);
+    }
+
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> getOrderById(@PathVariable Integer orderId) {
+
+        Integer authenticatedUserId = (Integer) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Customer customer = customerRepository.findByAppUser_Id(authenticatedUserId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new RuntimeException("Order not found"));
+
+        if (order.getCustomer().getId() != customer.getId()) {
+            return ResponseEntity.status(403).body(null);
+        }
+
+        OrderDTO orderDTO = OrderMapper.toOrderDTO(order);
+
+        return ResponseEntity.ok(orderDTO);
     }
 
     @Transactional

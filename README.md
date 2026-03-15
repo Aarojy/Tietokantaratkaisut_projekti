@@ -65,6 +65,52 @@ Below are the implemented database features:
 - **Transactions**:
   - Order creation and cancellation operations are wrapped in transactions to ensure data consistency.
 
+## Backup and recovery
+
+An dedicated user with privileges only to perform backups was created in the database and its credentials were used to run the following PowerShell script.
+The script creates a backup of the database using `mysqldump`, compresses the backup file, encrypts it with GPG and then deletes the unencrypted backup file and the uncompressed and unencrypted backup file.
+<br><br>
+This script can be scheduled to run at regular intervals using Windows Task Scheduler. The time for the scheduled task should be set to a time when the database is not expected to be under heavy load, such as 2:00 AM.
+<br><br>
+For the purposes of this assigment an environment variable named `DB_BACKUP_ENC_PASS` was not created, though for a production environment it would be necessary to store the encryption password in a secure way.
+```
+$DBName = "tietokantaratkaisutpopulated"
+$DBUser = 
+$DBPass = 
+$BackupDir = "C:\mysql-backups"
+$Date = Get-Date -Format "yyyy-MM-dd"
+$EncPass = 
+
+if (!(Test-Path $BackupDir)) {
+    New-Item -ItemType Directory -Path $BackupDir | Out-Null
+}
+
+$MySQLDump = "C:\Program Files\MySQL\MySQL Server 8.0\bin\mysqldump.exe"
+$SqlFile = "$BackupDir\$DBName-$Date.sql"
+$ZipFile = "$SqlFile.zip"
+$EncryptedFile = "$ZipFile.gpg"
+
+& $MySQLDump `
+    --user=$DBUser `
+    --password=$DBPass `
+    --routines `
+    --events `
+    --triggers `
+    --single-transaction `
+    $DBName `
+    > $SqlFile
+
+Compress-Archive -Path $SqlFile -DestinationPath $ZipFile
+
+Remove-Item $SqlFile
+
+gpg --batch --yes --passphrase "$EncPass" -c $ZipFile
+
+Remove-Item $ZipFile
+```
+
+
+
 ## API documentation
 
 ### Endpoints

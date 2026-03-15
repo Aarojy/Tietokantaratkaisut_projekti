@@ -2,6 +2,8 @@ package com.metropolia.aarojy.database_solutions_project.controller;
 
 import com.metropolia.aarojy.database_solutions_project.dto.CustomerAddressDTO;
 import com.metropolia.aarojy.database_solutions_project.dto.CustomerDTO;
+import com.metropolia.aarojy.database_solutions_project.dto.EmailRequest;
+import com.metropolia.aarojy.database_solutions_project.dto.PhoneNumberRequest;
 import com.metropolia.aarojy.database_solutions_project.entity.Customer;
 import com.metropolia.aarojy.database_solutions_project.entity.CustomerAddress;
 import com.metropolia.aarojy.database_solutions_project.mapper.CustomerMapper;
@@ -23,6 +25,40 @@ public class CustomerController {
     public CustomerController(CustomerRepository customerRepository, CustomerAddressRepository customerAddressRepository) {
         this.customerRepository = customerRepository;
         this.customerAddressRepository = customerAddressRepository;
+    }
+
+    @PatchMapping("/profile/email")
+    public ResponseEntity<?> updateCustomerEmail(@Valid @RequestBody EmailRequest request) {
+
+        Integer authenticatedUserId = (Integer) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Customer customer = customerRepository.findByAppUser_Id(authenticatedUserId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        customer.setEmail(request.email());
+        customerRepository.save(customer);
+
+        return ResponseEntity.ok("Customer email updated successfully");
+    }
+
+    @PatchMapping("/profile/phone")
+    public ResponseEntity<?> updateCustomerPhone(@Valid @RequestBody PhoneNumberRequest request) {
+
+        Integer authenticatedUserId = (Integer) SecurityContextHolder
+                .getContext()
+                .getAuthentication()
+                .getPrincipal();
+
+        Customer customer = customerRepository.findByAppUser_Id(authenticatedUserId)
+                .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+        customer.setPhone(request.phoneNumber());
+        customerRepository.save(customer);
+
+        return ResponseEntity.ok("Customer phone number updated successfully");
     }
 
     @GetMapping("/profile")

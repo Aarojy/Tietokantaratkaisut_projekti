@@ -13,7 +13,7 @@ This API provides all the necessary endpoints to build a user-facing e-commerce 
 - **MariaDB** - Relational database used for application data.
 - **MariaDB JDBC Driver** - Database connectivity for MariaDB.
 - **Spring Security** - Authentication/authorization for protected endpoints.
-- **JWT** - Token-based authentication (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`).
+- **JWT** - Token-based authentication.
 - **Bean Validation (Jakarta Validation / Spring Validation)** - Request payload validation.
 - **Maven** - Build and dependency management.
 
@@ -94,6 +94,22 @@ Below are the implemented database features:
     ADD SYSTEM VERSIONING;
     ```
 
+- **Views**:
+  - A database view named `order_summary` was created to simplify queries for simplified order information, such as total cost and the amount of different products in each order.
+    ```
+    CREATE VIEW order_summary AS
+    SELECT
+    o.customer_id,
+    o.id AS order_id,
+    o.order_date,
+    o.delivery_date,
+    o.status,
+    SUM(oi.quantity * oi.unit_price) AS total_cost,
+    COUNT(DISTINCT oi.product_id) AS amount_of_different_products
+    FROM orders o
+    JOIN orderitems oi ON oi.order_id = o.id
+    GROUP BY o.id
+    ```
 
 ## API security features
 

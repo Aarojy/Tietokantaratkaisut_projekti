@@ -35,11 +35,11 @@ Below are the implemented database features:
   - 'price' in 'products' for efficient price range queries.
   - 'username' in 'app_users' for fast authentication lookups.
 
+(example of one of the indexes created)
   ```
   CREATE INDEX idx_products_price
   ON products (price);
   ```
-  (example of one of the indexes created)
   
 - **Information Security**:
   - Database user used by the API is configured with the least privileges necessary for application functionality.

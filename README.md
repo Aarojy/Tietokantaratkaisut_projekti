@@ -8,12 +8,12 @@ This API provides all the necessary endpoints to build a user-facing e-commerce 
 
 - **Java 21** - Programming language used for developing the application.
 - **Spring Boot 3.5.11** - Application framework for building the REST API.
-- **Spring Web (Spring MVC)** - HTTP routing and REST controllers.
+- **Spring Web** - HTTP routing and REST controllers.
 - **Spring Data JPA (Hibernate)** - ORM and database persistence layer.
 - **MariaDB** - Relational database used for application data.
 - **MariaDB JDBC Driver** - Database connectivity for MariaDB.
 - **Spring Security** - Authentication/authorization for protected endpoints.
-- **JWT (jjwt 0.11.5)** - Token-based authentication (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`).
+- **JWT** - Token-based authentication (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`).
 - **Bean Validation (Jakarta Validation / Spring Validation)** - Request payload validation.
 - **Maven** - Build and dependency management.
 
@@ -28,7 +28,7 @@ Database schema used was the one provided by for the assignment, but some additi
 
 Below are the implemented database features:
 
-- **Indexing**: Indexes on frequently queried fields.
+- **Indexing**:
   - 'customer_id' in 'orders' for fast retrieval of user orders.
   - 'category_id' in 'products' for efficient category-based queries.
   - 'supplier_id' in 'products' for efficient supplier-based queries.
@@ -37,7 +37,7 @@ Below are the implemented database features:
   
 - **Information Security**:
   - Database user used by the API is configured with the least privileges necessary for application functionality.
-  - Database can only be accessed from the same ip address as the API server.
+  - This database user can only access the database from the same IP address as the API server.
 
 - **Database events**:
   - A scheduled MySQL event runs every 12 hours and updates the status of orders whose delivery date has already passed to "DELIVERED".
@@ -68,6 +68,9 @@ Below are the implemented database features:
 ## API documentation
 
 ### Endpoints
+
+Endpoints are categorized into two groups based on whether they require authentication or not. Endpoints that do not require authentication are accessible to anyone, while endpoints that require authentication can only be accessed by users who have logged in and obtained a valid JWT token.
+<br>
 
 #### Does not require authentication
 

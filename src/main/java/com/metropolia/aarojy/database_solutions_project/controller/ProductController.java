@@ -7,6 +7,9 @@ import com.metropolia.aarojy.database_solutions_project.repository.ProductReposi
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.StreamSupport;
+
 @RestController
 @RequestMapping("/product")
 public class ProductController {
@@ -18,8 +21,13 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Iterable<Product>> getAllProducts() {
-        return ResponseEntity.ok(productRepository.findAll());
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
+        List<ProductDTO> products = StreamSupport
+                .stream(productRepository.findAll().spliterator(), false)
+                .map(OrderMapper::toProductDTO)
+                .toList();
+
+        return ResponseEntity.ok(products);
     }
 
     @GetMapping("{id}")

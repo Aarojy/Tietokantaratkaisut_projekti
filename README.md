@@ -109,7 +109,7 @@ gpg --batch --yes --passphrase "$EncPass" -c $ZipFile
 Remove-Item $ZipFile
 ```
 
-
+Automated transfers of the backup files to cloud storage or an offsite location were also considered, but for the purposes of this assignment they were not implemented.
 
 ## API documentation
 

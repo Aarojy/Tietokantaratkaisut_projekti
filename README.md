@@ -21,19 +21,19 @@ This API provides all the necessary endpoints to build a user-facing e-commerce 
 
 Database schema used was the one provided by for the assignment, but some additional features were implemented:
 
-- "app_user" table was added to store user login credentials and role information. The table has a one-to-one relationship with the "customer" table. This was done to separate authentication data from customer profile data.
-- "user_id" field was added to the "customer" table to link it to the "app_user" table.
-- "version" field was added to the "product" table to implement optimistic locking.
-- "reserved_quantity" field was added to the "product" table to keep track of the quantity of each product that is reserved for existing orders but not yet delivered.
+- `app_user` table was added to store user login credentials and role information. The table has a one-to-one relationship with the "customer" table. This was done to separate authentication data from customer profile data.
+- `user_id` field was added to the "customer" table to link it to the "app_user" table.
+- `version` field was added to the "product" table to implement optimistic locking.
+- `reserved_quantity` field was added to the "product" table to keep track of the quantity of each product that is reserved for existing orders but not yet delivered.
 
 Below are the implemented database features:
 
 - **Indexing**:
-  - 'customer_id' in 'orders' for fast retrieval of user orders.
-  - 'category_id' in 'products' for efficient category-based queries.
-  - 'supplier_id' in 'products' for efficient supplier-based queries.
-  - 'price' in 'products' for efficient price range queries.
-  - 'username' in 'app_users' for fast authentication lookups.
+  - `customer_id` in `orders` for fast retrieval of user orders.
+  - `category_id` in `products` for efficient category-based queries.
+  - `supplier_id` in `products` for efficient supplier-based queries.
+  - `price` in `products` for efficient price range queries.
+  - `username` in `app_users` for fast authentication lookups.
 
 (example of one of the indexes created)
   ```
@@ -43,7 +43,12 @@ Below are the implemented database features:
   
 - **Information Security**:
   - Database user used by the API is configured with the least privileges necessary for application functionality.
+    - `SELECT`: app_user, customeraddresses, customers, orderitems, orders, productcategories, products, suppliers
+    - `POST`: orders, orderitems, customers, customeraddresses, app_user
+    - `UPDATE`: products, orders, customers, customeraddresses, app_user
+    - `DELETE`: NONE
   - This database user can only access the database from the same IP address as the API server.
+    - Only `localhost`
 
 - **Events**:
   - A scheduled MySQL event runs every 12 hours and updates the status of orders whose delivery date has already passed to "DELIVERED".

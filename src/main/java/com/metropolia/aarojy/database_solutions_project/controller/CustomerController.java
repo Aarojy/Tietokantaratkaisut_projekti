@@ -8,6 +8,7 @@ import com.metropolia.aarojy.database_solutions_project.mapper.CustomerMapper;
 import com.metropolia.aarojy.database_solutions_project.mapper.OrderMapper;
 import com.metropolia.aarojy.database_solutions_project.repository.CustomerAddressRepository;
 import com.metropolia.aarojy.database_solutions_project.repository.CustomerRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -60,7 +61,7 @@ public class CustomerController {
     }
 
     @PatchMapping("/address")
-    public ResponseEntity<?> updateCustomerAddress(@RequestBody CustomerAddressDTO custAddrDto) {
+    public ResponseEntity<?> updateCustomerAddress(@Valid @RequestBody CustomerAddressDTO custAddrDto) {
 
         Integer authenticatedUserId = (Integer) SecurityContextHolder
                 .getContext()

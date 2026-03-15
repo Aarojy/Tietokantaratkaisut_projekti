@@ -7,6 +7,7 @@ import com.metropolia.aarojy.database_solutions_project.entity.*;
 import com.metropolia.aarojy.database_solutions_project.mapper.OrderMapper;
 import com.metropolia.aarojy.database_solutions_project.repository.*;
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -55,7 +56,7 @@ public class OrderController {
 
     @Transactional
     @PostMapping("/create")
-    public ResponseEntity<OrderDTO> createOrder(@RequestBody NewOrderDTO newOrderDTO) {
+    public ResponseEntity<OrderDTO> createOrder(@Valid @RequestBody NewOrderDTO newOrderDTO) {
 
         Integer authenticatedUserId = (Integer) SecurityContextHolder
                 .getContext()

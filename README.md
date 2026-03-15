@@ -4,12 +4,22 @@
 
 #### Does not require authentication
 
+Authentication
+
+| Endpoint            | Purpose              | requests body                                                                                                                                                                                                                                | response body                                                                                                                                                                                                                                                            |
+|---------------------|----------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| POST /auth/register | Register a new user  | ```{"username": "JohnDoe", "password": "secret123", "firstName": "John", "lastName": "Doe", "email": "JohnDoe@gmail.com", "phone": "0446753464", "street": "Roadyroad 5", "city": "City 17", "postalCode": "54321", "country": "Germany"}``` | A success message<br/>```{"message": "User registered successfully"}```<br/>or an error message<br/>```{"message": "Username already exists"}```, <br/>```{"username": "must not be blank"}``` etc.                                                                      |
+| POST /auth/login    | Login to a user      | ```{"username": "JohnDoe", "password": "secret123"}```                                                                                                                                                                                       | A JWT token<br/>```{"token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJKb2huRG9lIiwidXNlcklkIjoxMSwiaWF0IjoxNzczNTY4OTIzLCJleHAiOjE3NzM2NTUzMjN9.xuTay4kxPw70azqc7TvnR9VIlSfDDhlsY1FYpekJaF8"}```<br/>or an error message<br/>```{"message": "Invalid username or password"}```   |
+
 Product
 
-| Endpoint          | Purpose                           | requests body | response body                                                                                                                                                       |
-|-------------------|-----------------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| GET /product/all  | Retrieve all products             | {}            | List of product entities<br/>```[{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}, ... ]``` |
-| GET /product/{id} | Retrieve a specific product by ID | {}            | A single product entity```{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}```               |
+| Endpoint                                    | Purpose                              | requests body | response body                                                                                                                                                       |
+|---------------------------------------------|--------------------------------------|---------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GET /product/all                            | Retrieve all products                | {}            | List of product entities<br/>```[{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}, ... ]``` |
+| GET /product/{id}                           | Retrieve a specific product by ID    | {}            | A single product entity```{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}```               |
+| GET /product/search/name/{name}             | Search for products by name          | {}            | List of product entities<br/>```[{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}, ... ]``` |
+| GET /product/search/price/{min}/{max}       | Search for products by price range   | {}            | List of product entities<br/>```[{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}, ... ]``` |
+| GET /product/search/supplier/{supplierName} | Search for products by supplier name | {}            | List of product entities<br/>```[{"name":"Super Bug 360","description":"Her fall move current him.","price":22.22,"category":{"name":"Kodin tarvikkeet"}}, ... ]``` |
 
 Category
 
@@ -18,13 +28,23 @@ Category
 | GET /category/all  | Retrieve all categories                   | {}            | List of category entities<br/>```[{"id":1,"name":"Elektroniikka","description":"Sähkölaitteet, komponentit ja elektroniikkatuotteet"}, ... ]```                                                                                                                                                                           |
 | GET /category/{id} | Retrieve all products in a category by ID | {}            | List of product entities<br/>```[{"id":2,"name":"Happy Pack 382","description":"Score million throw thing instead ball line think.","price":546.08,"stock_quantity":407,"reserved_quantity":0,"category":{"id":10,"name":"Urheilu & vapaa-aika","description":"Urheiluvälineet, pelit ja vapaa-ajan tuotteet"}}, ... ]``` |
 
+Supplier
+
+| Endpoint           | Purpose                                  | requests body | response body                                                                                                                            |
+|--------------------|------------------------------------------|---------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| GET /supplier/all  | Retrieve all suppliers                   | {}            | List of supplier entities<br/>```[{"name": "Polar Electronics Oy"}, {"name": "EcoTech Ltd"}, {"name": "Suomen Viherpalvelut"}, ... ]```  |
+
+<br>
+
 #### Requires authentication
 
-Profile
+Customer
 
-| Endpoint     | Purpose                                   | requests body | response body                                                                                                               |
-|--------------|-------------------------------------------|---------------|-----------------------------------------------------------------------------------------------------------------------------|
-| GET /profile | Retrieve the authenticated user's profile | {}            | Customer entity<br/>```{"first_name": "Matti", "last_name": "Tepponen", "email": "Matti@tepponen.com", "phone": "0446753464"}``` |
+| Endpoint       | Purpose                                             | requests body                                                                                         | response body                                                                                                                                         |
+|----------------|-----------------------------------------------------|-------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------|
+| GET /profile   | Retrieve the authenticated user's profile           | {}                                                                                                    | Customer entity<br/>```{"first_name": "Matti", "last_name": "Tepponen", "email": "Matti@tepponen.com", "phone": "0446753464"}```                      |
+| GET /address   | Retrieve the authenticated user's shipping address  | {}                                                                                                    | Address entity<br/>```{"street": "Aurajoentie 5", "city": "Turku", "postalCode": "54321", "country": "Finland"}```                                    |
+| PATCH /address | Update the authenticated user's shipping address    | ```{"street": "New Street 1", "city": "New City", "postalCode": "12345", "country": "New Country"}``` | A success message<br/>```{"message": "Address updated successfully"}```<br/>or an error message<br/>```{"country": "Country cannot be empty"}``` etc. |
 
 Order
 

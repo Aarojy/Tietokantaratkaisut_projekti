@@ -24,14 +24,12 @@ public class OrderController {
     private final CustomerAddressRepository customerAddressRepository;
     private final CustomerRepository customerRepository;
     private final ProductRepository productRepository;
-    private final UserRepository userRepository;
 
-    public OrderController(OrderRepository orderRepository, CustomerAddressRepository customerAddressRepository, CustomerRepository customerRepository, ProductRepository productRepository, UserRepository userRepository) {
+    public OrderController(OrderRepository orderRepository, CustomerAddressRepository customerAddressRepository, CustomerRepository customerRepository, ProductRepository productRepository) {
         this.customerRepository = customerRepository;
         this.orderRepository = orderRepository;
         this.customerAddressRepository = customerAddressRepository;
         this.productRepository = productRepository;
-        this.userRepository = userRepository;
     }
 
     @GetMapping("/list")

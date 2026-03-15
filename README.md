@@ -1,3 +1,43 @@
+# E-commerce user API Documentation
+
+## Overview
+
+This API provides all the necessary endpoints to build a user-facing e-commerce application. It allows users view, search and filter products by name, price range, category and supplier. Users can also register, login, view and update their profile and shipping address, and manage their orders (create new orders, view order history and cancel existing orders). The API uses JWT for authentication and authorization, ensuring that only authenticated users can access protected endpoints.
+
+## Technologies Used
+
+- **Java 21** - Programming language used for developing the application.
+- **Spring Boot 3.5.11** - Application framework for building the REST API.
+- **Spring Web (Spring MVC)** - HTTP routing and REST controllers.
+- **Spring Data JPA (Hibernate)** - ORM and database persistence layer.
+- **MariaDB** - Relational database used for application data.
+- **MariaDB JDBC Driver** - Database connectivity for MariaDB.
+- **Spring Security** - Authentication/authorization for protected endpoints.
+- **JWT (jjwt 0.11.5)** - Token-based authentication (`jjwt-api`, `jjwt-impl`, `jjwt-jackson`).
+- **Bean Validation (Jakarta Validation / Spring Validation)** - Request payload validation.
+- **Springdoc OpenAPI (Swagger UI)** - Interactive API documentation (`springdoc-openapi-starter-webmvc-ui`).
+- **Maven Wrapper (`mvnw`, `mvnw.cmd`)** - Build and dependency management.
+
+## Database features
+
+- **Indexing**: Indexes on frequently queried fields.
+  - 'customer_id' in 'orders' for fast retrieval of user orders.
+  - 'category_id' in 'products' for efficient category-based queries.
+  - 'supplier_id' in 'products' for efficient supplier-based queries.
+  - 'price' in 'products' for efficient price range queries.
+  - 'username' in 'app_users' for fast authentication lookups.
+  
+- **Information Security**:
+  - Passwords are securely hashed using BCrypt before storing in the database.
+  - JWT tokens are used for stateless authentication, with secure signing and expiration.
+  - Input validation is implemented to prevent invalid data entering the database.
+  - Endpoints are protected by only allowing authenticated users to access sensitive operations (e.g., viewing profile, managing orders).
+  - Database user used by the API is configured with the least privileges necessary for application functionality.
+  - Database can only be accessed from the same ip address as the API server.
+
+- **Database events**:
+  - A scheduled MySQL event runs every 12 hours and updates the status of orders whose delivery date has already passed to "DELIVERED".
+
 ## API documentation
 
 ### Endpoints

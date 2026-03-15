@@ -34,17 +34,48 @@ Below are the implemented database features:
   - 'supplier_id' in 'products' for efficient supplier-based queries.
   - 'price' in 'products' for efficient price range queries.
   - 'username' in 'app_users' for fast authentication lookups.
+
+  ```
+  CREATE INDEX idx_products_price
+  ON products (price);
+  ```
+  (example of one of the indexes created)
   
 - **Information Security**:
   - Database user used by the API is configured with the least privileges necessary for application functionality.
   - This database user can only access the database from the same IP address as the API server.
 
-- **Database events**:
+- **Events**:
   - A scheduled MySQL event runs every 12 hours and updates the status of orders whose delivery date has already passed to "DELIVERED".
+    ```
+    CREATE EVENT auto_ship_orders
+    ON SCHEDULE EVERY 12 HOUR
+    DO
+    UPDATE orders
+    SET status = 'SHIPPED'
+    WHERE delivery_date IS NOT NULL
+    AND delivery_date < NOW()
+    AND status = 'NEW';
+    ```
 
 - **Triggers**:
   - A database trigger is set up to automatically reduce the stock quantity and reserved quantity of products when orders that include them have their status updated to "SHIPPED".
-
+    ```
+    CREATE TRIGGER trg_order_status_shipped
+    AFTER UPDATE ON orders
+    FOR EACH ROW
+    BEGIN
+    IF OLD.status = 'NEW' AND NEW.status = 'SHIPPED' THEN
+    UPDATE products p
+    JOIN orderitems oi ON oi.product_id = p.id
+    SET
+    p.reserved_quantity = p.reserved_quantity - oi.quantity,
+    p.stock_quantity = p.stock_quantity - oi.quantity
+    WHERE oi.order_id = NEW.id;
+    END IF;
+    END
+    ```
+    
 - **Locking**:
   - Optimistic locking is implemented for the "product" entity using a version field.
 

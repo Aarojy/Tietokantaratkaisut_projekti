@@ -27,6 +27,11 @@ public class Product {
     @JsonIgnoreProperties("products")
     private ProductCategory category;
 
+    @ManyToOne
+    @JoinColumn(name = "supplier_id")
+    @JsonIgnoreProperties("products")
+    private Supplier supplier;
+
     public Product() {
     }
 
@@ -92,5 +97,13 @@ public class Product {
 
     public void setReserved_quantity(int reserved_quantity) {
         this.reserved_quantity = reserved_quantity;
+    }
+
+    public Supplier getSupplier() {
+        return supplier;
+    }
+
+    public void setSupplier(Supplier supplier) {
+        this.supplier = supplier;
     }
 }

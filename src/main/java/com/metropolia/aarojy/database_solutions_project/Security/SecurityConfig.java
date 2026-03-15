@@ -26,8 +26,10 @@ public class SecurityConfig {
                                 "/product/*",
                                 "/product/search/name/*",
                                 "/product/search/price/*/*",
+                                "/product/search/supplier/*",
                                 "/category/all",
-                                "/category/*"
+                                "/category/*",
+                                "/suppliers/all"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -58,4 +58,15 @@ public class ProductController {
 
         return ResponseEntity.ok(products);
     }
+
+    @GetMapping("/search/supplier/{suppliername}")
+    public ResponseEntity<List<ProductDTO>> searchProductsBySupplierName(@PathVariable String suppliername) {
+        List<ProductDTO> products = productRepository.findAll()
+                .stream()
+                .filter(p -> p.getSupplier().getName().equalsIgnoreCase(suppliername))
+                .map(OrderMapper::toProductDTO)
+                .toList();
+
+        return ResponseEntity.ok(products);
+    }
 }

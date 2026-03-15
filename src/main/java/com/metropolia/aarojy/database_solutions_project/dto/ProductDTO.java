@@ -6,5 +6,6 @@ public record ProductDTO(
         String name,
         String description,
         BigDecimal price,
-        CategoryDTO category
+        String category,
+        String supplier
 ) {}

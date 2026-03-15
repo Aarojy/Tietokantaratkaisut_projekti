@@ -49,7 +49,8 @@ public class OrderMapper {
                 p.getName(),
                 p.getDescription(),
                 p.getPrice(),
-                new CategoryDTO(p.getCategory().getName())
+                p.getCategory().getName(),
+                p.getSupplier().getName()
         );
     }
 
